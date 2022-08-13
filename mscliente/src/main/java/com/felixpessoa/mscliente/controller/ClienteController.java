@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,7 +30,7 @@ public class ClienteController {
 	
 	@PostMapping
 	public ResponseEntity<?> save(@RequestBody ClienteSaveReuest request) {
-		Cliente cliente = request.toModel();
+		Cliente cliente = clienteService.save(request.toModel());
 		URI headerLocation = ServletUriComponentsBuilder
 				.fromCurrentRequest()
 				.query("cpf={cpf}")
@@ -38,6 +39,13 @@ public class ClienteController {
 		return ResponseEntity.created(headerLocation).build();
 	}
 	
-	public ResponseEntity<Cliente> dados
+	@GetMapping(params = "cpf")
+	public ResponseEntity<?> dadosCliente(@RequestParam("cpf") String cpf){
+		var cliente = clienteService.getByCpf(cpf);
+		if(cliente.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}	
+		return ResponseEntity.ok(cliente);
+	}
 
 }
