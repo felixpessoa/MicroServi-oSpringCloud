@@ -17,6 +17,7 @@ public class AvaliadorCreditoController {
 	@Autowired
 	private AvaliadorCreditoService avaliadorCreditoService;
 	
+	
 	@GetMapping
 	public String status() {
 		return "ok";

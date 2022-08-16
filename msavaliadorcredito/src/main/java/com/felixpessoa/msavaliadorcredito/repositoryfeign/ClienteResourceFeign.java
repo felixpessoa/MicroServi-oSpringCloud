@@ -1,4 +1,4 @@
-package com.felixpessoa.msavaliadorcredito.feign;
+package com.felixpessoa.msavaliadorcredito.repositoryfeign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
