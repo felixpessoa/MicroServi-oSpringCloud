@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.felixpessoa.msavaliadorcredito.model.DadosAvaliacao;
+import com.felixpessoa.msavaliadorcredito.model.DadosSolicitacaoEmissaoCartao;
+import com.felixpessoa.msavaliadorcredito.model.ProtocoloSolicitacaoCartao;
 import com.felixpessoa.msavaliadorcredito.model.RetornoAvaliacaoCliente;
 import com.felixpessoa.msavaliadorcredito.model.SituacaoCliente;
 import com.felixpessoa.msavaliadorcredito.service.AvaliadorCreditoService;
 import com.felixpessoa.msavaliadorcredito.service.exception.DadosClienteNotFoundException;
 import com.felixpessoa.msavaliadorcredito.service.exception.ErroComunicacaoMicroservicesException;
+import com.felixpessoa.msavaliadorcredito.service.exception.ErroSolicitacaoCartaoException;
 
 @RestController
 @RequestMapping("avaliacoes-credito")
@@ -30,7 +33,7 @@ public class AvaliadorCreditoController {
 	}
 
 	@GetMapping(value = "situacao-cliente", params = "cpf")
-	public ResponseEntity<?> consultaSituacaoCliente(@RequestParam("cpf") String cpf) {
+	public ResponseEntity<?> consultarSituacaoCliente(@RequestParam("cpf") String cpf) {
 		try {
 			SituacaoCliente situacaoCliente = avaliadorCreditoService.obterSituacaoCliente(cpf);
 			return ResponseEntity.ok(situacaoCliente);
@@ -60,6 +63,16 @@ public class AvaliadorCreditoController {
 
 			return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
 
+		}
+	}
+	
+	@PostMapping("solicitacoes-cartao")
+	public ResponseEntity<?> solicitarCartao(@RequestBody DadosSolicitacaoEmissaoCartao dados){
+		try {
+			ProtocoloSolicitacaoCartao protocoloSolicitacaoCartao = avaliadorCreditoService.solicitarEmissaoCartao(dados);
+			return ResponseEntity.ok(protocoloSolicitacaoCartao);
+		} catch (ErroSolicitacaoCartaoException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
 	}
 

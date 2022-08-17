@@ -1,4 +1,4 @@
-package com.felixpessoa.msavaliadorcredito.model;
+package com.felixpessoa.mscartoes.model;
 
 import java.math.BigDecimal;
 

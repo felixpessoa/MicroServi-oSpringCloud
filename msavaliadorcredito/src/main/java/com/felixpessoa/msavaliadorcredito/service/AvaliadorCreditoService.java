@@ -2,6 +2,7 @@ package com.felixpessoa.msavaliadorcredito.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,16 @@ import com.felixpessoa.msavaliadorcredito.model.Cartao;
 import com.felixpessoa.msavaliadorcredito.model.CartaoAprovado;
 import com.felixpessoa.msavaliadorcredito.model.CartaoCliente;
 import com.felixpessoa.msavaliadorcredito.model.DadosCliente;
+import com.felixpessoa.msavaliadorcredito.model.DadosSolicitacaoEmissaoCartao;
+import com.felixpessoa.msavaliadorcredito.model.ProtocoloSolicitacaoCartao;
 import com.felixpessoa.msavaliadorcredito.model.RetornoAvaliacaoCliente;
 import com.felixpessoa.msavaliadorcredito.model.SituacaoCliente;
 import com.felixpessoa.msavaliadorcredito.repositoryfeign.CartoesResourceFeign;
 import com.felixpessoa.msavaliadorcredito.repositoryfeign.ClienteResourceFeign;
 import com.felixpessoa.msavaliadorcredito.service.exception.DadosClienteNotFoundException;
 import com.felixpessoa.msavaliadorcredito.service.exception.ErroComunicacaoMicroservicesException;
+import com.felixpessoa.msavaliadorcredito.service.exception.ErroSolicitacaoCartaoException;
+import com.felixpessoa.msavaliadorcredito.util.mqueue.SolicitacaoEmissaoCartaoPublisher;
 
 import feign.FeignException;
 
@@ -29,6 +34,8 @@ public class AvaliadorCreditoService {
 	private ClienteResourceFeign clienteResourceFeign;
 	@Autowired
 	private CartoesResourceFeign cartoesResourceFeign;
+	@Autowired
+	private SolicitacaoEmissaoCartaoPublisher emiCartaoPublisher;
 
 	public SituacaoCliente obterSituacaoCliente(String cpf)
 			throws DadosClienteNotFoundException, ErroComunicacaoMicroservicesException {
@@ -82,6 +89,16 @@ public class AvaliadorCreditoService {
 			throw new ErroComunicacaoMicroservicesException(e.getMessage(), status);
 		}
 
+	}
+
+	public ProtocoloSolicitacaoCartao solicitarEmissaoCartao(DadosSolicitacaoEmissaoCartao dados) {
+		try {
+			emiCartaoPublisher.solicitarCartao(dados);
+			var protocolo = UUID.randomUUID().toString();
+			return new ProtocoloSolicitacaoCartao(protocolo);
+		} catch (Exception e) {
+			throw new ErroSolicitacaoCartaoException(e.getMessage());
+		}
 	}
 
 }
