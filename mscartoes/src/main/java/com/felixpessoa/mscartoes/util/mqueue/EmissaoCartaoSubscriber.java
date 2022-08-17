@@ -1,4 +1,4 @@
-package com.felixpessoa.mscartoes.config.mqueue;
+package com.felixpessoa.mscartoes.util.mqueue;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
