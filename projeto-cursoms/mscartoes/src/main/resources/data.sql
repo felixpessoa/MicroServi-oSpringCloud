@@ -1,0 +1,2 @@
+INSERT INTO CARTAO (id, nome, bandeira_Cartao, renda, limite_Basico) VALUES (null, 'bradesco master', 'MASTERCARD', 6000.00, 8000.00);
+INSERT INTO CARTAO (id, nome, bandeira_Cartao, renda, limite_Basico) VALUES (null, 'bradesco visa', 'VISA', 3000.00, 3500.00);
